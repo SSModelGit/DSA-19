@@ -4,7 +4,8 @@ public class HelloWorld {
         debugPractice();
 
         // After you step out of debugPractice, you should end up here
-        System.out.println("Hello, World!");
+        System.out.print("Hello, World!");
+        System.out.println("How are you?");
     }
 
     /* Use this function to play around with IntelliJ's debugger */
