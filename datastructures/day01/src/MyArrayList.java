@@ -4,13 +4,13 @@ public class MyArrayList {
 
     // Runtime: O(1)
     public MyArrayList() {
-        elems = Cow[10];
+        elems = new Cow[10];
         size = 0;
     }
 
     // Runtime: O(1)
     public MyArrayList(int capacity) {
-        elems = Cow[capacity];
+        elems = new Cow[capacity];
         size = 0;
     }
 
@@ -28,13 +28,13 @@ public class MyArrayList {
 
     // Runtime: O(1)
     public Cow get(int index) {
-        checkIndex(index);
+        checkIndex(index,"get");
         return elems[index];
     }
 
     // Runtime: O(n)
     public Cow remove(int index) {
-        checkIndex(index);
+        checkIndex(index,"remove");
         Cow removed = elems[index];
 
         for (int i=index; i<size-1; i++) {
@@ -48,11 +48,12 @@ public class MyArrayList {
 
     // Runtime: O(n)
     public void add(int index, Cow c) {
-        checkIndex(index);
+        checkIndex(index,"add");
         
         for (int i = index; i<size-1; i++) {
             elems[i+1] = elems[i];
         }
+        elems[index] = c;
 
         size++;
         resize(elems);
@@ -60,27 +61,30 @@ public class MyArrayList {
 
     // Runtime: O(n)
     public void resize(Cow[] c) {
-        
+        Cow[] newElems;
         if (c.length / 4 > size) {
             if (c.length/2 > 1) {
-                Cow[] newElems = Cow[c.length/2];
+                newElems = new Cow[c.length/2];
             }
             else {
-                Cow[] newElems = Cow[2];
+                newElems = new Cow[2];
             }
             System.arraycopy(c, 0, newElems, 0, size);
             elems = newElems;
         }
         if (c.length == size) {
-            Cow[] newElems = Cow[c.length * 2];
+            newElems = new Cow[c.length * 2];
             System.arraycopy(c, 0, newElems, 0, size);
             elems = newElems;
         }
     }
     // Runtime: O(1)
-    public void checkIndex(int idx) {
-        if(index < 0 || index > size) 
+    public void checkIndex(int idx, String testType) {
+        if(idx < 0 || idx > size) 
         {
+            throw new IndexOutOfBoundsException();
+        }
+        if((testType == "remove" || testType == "get") && idx == size) {
             throw new IndexOutOfBoundsException();
         }
     }
