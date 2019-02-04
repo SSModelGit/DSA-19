@@ -19,5 +19,6 @@ public class HelloWorld {
 
         x++;
         y = z - x; // When you get to this line, "Step Out" to go back to the main method.
+        System.out.print(y); // Just to get rid of this annoying 'y value isn\'t used' error.
     }
 }
