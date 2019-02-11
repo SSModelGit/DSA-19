@@ -8,7 +8,8 @@ public class MyHashMap<K, V> implements Map<K, V> {
     private static final double BETA = .25;
 
     // resizing factor: (new size) = (old size) * (resize factor)
-    private static final double SHRINK_FACTOR = 0.5, GROWTH_FACTOR = 2.0;
+    private static final double SHRINK_FACTOR = 0.5;
+    private static final double GROWTH_FACTOR = 2.0;
 
     private static final int MIN_BUCKETS = 16;
 
@@ -52,8 +53,8 @@ public class MyHashMap<K, V> implements Map<K, V> {
     private LinkedList<Entry> chooseBucket(Object key) {
         // TODO
         // hint: use key.hashCode() to calculate the key's hashCode using its built in hash function
-        // then use % to choose which bucket to return.
-        return null;
+        // then use % to choose which bucket to returkey.hashCode()n.
+        return buckets[key.hashCode() % buckets.length];
     }
 
     @Override
@@ -71,8 +72,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
      */
     @Override
     public boolean containsKey(Object key) {
-        // TODO
-        return false;
+        return keySet().contains(key);
     }
 
     /**
@@ -80,13 +80,22 @@ public class MyHashMap<K, V> implements Map<K, V> {
      */
     @Override
     public boolean containsValue(Object value) {
-        // TODO
-        return false;
+        return values().contains(value);
     }
 
     @Override
     public V get(Object key) {
-        // TODO
+        if (containsKey(key)) {
+            LinkedList<Entry> temp = chooseBucket(key);
+            Entry search;
+            int searchLen = temp.size();
+            for (int i = 0; i < searchLen; i++) {
+                search = temp.get(i);
+                if (search.getKey().equals(key)) {
+                    return search.getValue();
+                }
+            }
+        }
         return null;
     }
 
@@ -96,9 +105,26 @@ public class MyHashMap<K, V> implements Map<K, V> {
      */
     @Override
     public V put(K key, V value) {
-        // TODO: Complete this method
-        // hint: use chooseBucket() to determine which bucket to place the pair in
-        // hint: use rehash() to appropriately grow the hashmap if needed
+        Entry goingIn = new Entry(key, value);
+        if (containsKey(key)) {
+            LinkedList<Entry> temp = chooseBucket(key);
+            Entry search;
+            for (int i = 0; i < temp.size(); i++) {
+                search = temp.get(i);
+                if (search.getKey().equals(key)) {
+                    V rVal = search.getValue();
+                    search.setValue(value);
+                    return rVal;
+                }
+            }
+        }
+        else {
+            chooseBucket(key).add(goingIn);
+            size++;
+            if ((double) size/buckets.length > ALPHA) {
+                rehash(GROWTH_FACTOR);
+            }
+        }
         return null;
     }
 
@@ -109,9 +135,22 @@ public class MyHashMap<K, V> implements Map<K, V> {
      */
     @Override
     public V remove(Object key) {
-        // TODO
-        // hint: use chooseBucket() to determine which bucket the key would be
-        // hint: use rehash() to appropriately grow the hashmap if needed
+        if (containsKey(key)) {
+            LinkedList<Entry> temp = chooseBucket(key);
+            Entry search;
+            for (int i = 0; i < temp.size(); i++) {
+                search = temp.get(i);
+                if (search.getKey().equals(key)) {
+                    V rVal = search.getValue();
+                    temp.remove(i);
+                    size--;
+                    if ((double) size/buckets.length < BETA) {
+                        rehash(SHRINK_FACTOR);
+                    }
+                    return rVal;
+                }
+            }
+        }
         return null;
     }
 
@@ -128,8 +167,16 @@ public class MyHashMap<K, V> implements Map<K, V> {
      * the number of buckets is divided by 4.
      */
     private void rehash(double growthFactor) {
-        // TODO
-        // hint: once you have removed all values from the buckets, use put(k, v) to add them back in the correct place
+        Set<Map.Entry<K, V>> set = entrySet();
+        int newSize = (int) ((double) buckets.length * growthFactor);
+        if (newSize >= MIN_BUCKETS) {
+            initBuckets(newSize);
+            size = 0;
+            
+            for (Map.Entry<K, V> e : set) {
+                put(e.getKey(), e.getValue());
+            }
+        }
     }
 
     private void initBuckets(int size) {
