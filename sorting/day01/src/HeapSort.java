@@ -18,7 +18,33 @@ public class HeapSort extends SortAlgorithm {
     // Corrects the position of element indexed i by sinking it.
     // Use either recursion or a loop to then sink the child
     public void sink(int i) {
-        // TODO
+        int lC, rC;
+        lC = leftChild(i);
+        rC = rightChild(i);
+        if (lC < size) {
+            if (heap[i] < heap[lC]) {
+                if (rC < size) {
+                    if (heap[lC] <= heap[rC]) {
+                        swap(heap, i, rC);
+                        sink(rC);
+                    }
+                    else {
+                        swap(heap, i, lC);
+                        sink(lC);
+                    }
+                }
+                else {
+                    swap(heap, i, lC);
+                    sink(lC);
+                }
+            }
+            else if (rC < size) {
+                if (heap[i] < heap[rC]) {
+                    swap(heap, i, rC);
+                    sink(rC);
+                }
+            }
+        }
     }
 
     // Given the array, build a heap by correcting every non-leaf's position, starting from the bottom, then
@@ -28,25 +54,52 @@ public class HeapSort extends SortAlgorithm {
         this.size = array.length;
 
         for (int i=this.size / 2 - 1; i>=0; i--) {
-            // TODO
+            sink(i);
         }
     }
 
     /**
-     * Best-case runtime:
-     * Worst-case runtime:
-     * Average-case runtime:
+     * Best-case runtime: O(nlogn)
+     * Worst-case runtime: ""
+     * Average-case runtime: ""
      *
-     * Space-complexity:
+     * Space-complexity: O(logn)
      */
     @Override
     public int[] sort(int[] array) {
         heapify(array);
 
         for (int i=size-1; i>0; i--) {
-            // TODO
+            sink(0);
+            swap(heap, 0, i);
+            size--;
         }
 
         return heap;
     }
+
+    void printArray(int arr[], boolean cutOff) 
+    { 
+        int n = arr.length; 
+        if (cutOff) {
+            for (int i=0; i<size; ++i) 
+                System.out.print(arr[i]+" "); 
+        }
+        else {
+            for (int i=0; i<n; ++i) 
+                System.out.print(arr[i]+" "); 
+        }
+    } 
+  
+    // Debugger program 
+    /* public static void main(String args[]) 
+    { 
+        int arr[] = {1, 3, 2, 5, 1, 2, 7, 9};
+  
+        HeapSort ob = new HeapSort(); 
+        arr = ob.sort(arr);
+
+        System.out.println("sorted array: ");
+        ob.printArray(arr, false); 
+    } */
 }
