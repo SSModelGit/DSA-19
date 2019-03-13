@@ -1,6 +1,5 @@
 import java.util.NoSuchElementException;
 
-
 public class RedBlackTree<T extends Comparable<T>> extends BinarySearchTree<T> {
 
     public static final boolean RED = true;
@@ -34,20 +33,32 @@ public class RedBlackTree<T extends Comparable<T>> extends BinarySearchTree<T> {
     //-No 2 red nodes in a row
 
     // make a left-leaning link lean to the right
-    TreeNode<T> rotateRight(TreeNode<T> h) {
-        // TODO
-        return h;
+    TreeNode<T> rotateRight(TreeNode<T> n) {
+        TreeNode<T> left = n.leftChild;
+        TreeNode<T> foo = left.rightChild;
+        left.rightChild = n;
+        n.leftChild = foo;
+        left.color = left.rightChild.color;
+        left.rightChild.color = RED;
+        return left;
     }
 
     // make a right-leaning link lean to the left
-    TreeNode<T> rotateLeft(TreeNode<T> h) {
-        // TODO
-        return h;
+    TreeNode<T> rotateLeft(TreeNode<T> n) {
+        TreeNode<T> right = n.rightChild;
+        TreeNode<T> foo = right.leftChild;
+        right.leftChild = n;
+        n.rightChild = foo;
+        right.color = right.leftChild.color;
+        right.leftChild.color = RED;
+        return right;
     }
 
     // flip the colors of a TreeNode and its two children
     TreeNode<T> flipColors(TreeNode<T> h) {
-        // TODO
+        h.color = !h.color;
+        h.leftChild.color = !h.leftChild.color;
+        h.rightChild.color = !h.rightChild.color;
         return h;
     }
 
@@ -60,19 +71,27 @@ public class RedBlackTree<T extends Comparable<T>> extends BinarySearchTree<T> {
      * return balanced node
      */
     private TreeNode<T> balance(TreeNode<T> h) {
-        // TODO
+        if (!isRed(h.leftChild) && isRed(h.rightChild)) {
+            h = rotateLeft(h);
+        }
+        else if (h.leftChild != null && isRed(h.leftChild) && isRed(h.leftChild.leftChild)) {
+            h = rotateRight(h);
+        }
+        if (isRed(h.leftChild) && isRed(h.rightChild))
+            h = flipColors(h);
         return h;
     }
+    
 
 
     /**
      * Recursively insert a new node into the BST
-     * Runtime: TODO
+     * Runtime: 
      */
     @Override
     TreeNode<T> insert(TreeNode<T> h, T key) {
         h = super.insert(h, key);
-        // TODO: use balance to correct for the three rotation cases
+        h = (h != null) ? balance(h) : h;
         return h;
     }
 
