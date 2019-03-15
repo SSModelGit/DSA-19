@@ -91,7 +91,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
     /**
      * Returns a node with the given key in the BST, or null if it doesn't exist.
      */
-    private RangeNode<T> find(RangeNode<T> currentNode, T key) {
+    public RangeNode<T> find(RangeNode<T> currentNode, T key) {
         if (currentNode == null)
             return null;
         int cmp = key.compareTo(currentNode.key);
