@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
 
 public class NQueens {
 
@@ -50,9 +51,63 @@ public class NQueens {
 
 
     public static List<char[][]> nQueensSolutions(int n) {
-        // TODO
+        char[][] board = new char[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                board[i][j] = '.';
+            }
+        }
         List<char[][]> answers = new ArrayList<>();
+        HashSet<Integer> numQ = new HashSet<Integer>(); // Stores columns occupied by Queens
+        nQHelper(n, board, numQ, answers);
         return answers;
     }
 
+    private static void nQHelper(int n, char[][] board, HashSet<Integer> qSet, List<char[][]> sol) {
+        if (qSet.size() == n) {
+            sol.add(copyOf(board));
+            // System.out.println("Added board number " + sol.size());
+        }
+        else {
+            int row = qSet.size();
+            for (int i = 0; i < n; i++) {
+                if (!qSet.contains(i)) {
+                    board[row][i] = 'Q';
+                    if (!checkDiagonal(board, row, i)) {
+                        qSet.add(i);
+                        nQHelper(n, board, qSet, sol);
+                        qSet.remove(i);
+                        board[row][i] = '.';
+                    }
+                    else {
+                        board[row][i] = '.';
+                    }
+                }
+            }
+        }
+    }
+
+    public static void main(String args[]) {
+        List<char[][]> sol = nQueensSolutions(15);
+        System.out.println(sol.size());
+        // printBoardList(sol);
+    }
+
+    private static void printBoard(char[][] board) {
+        for (int i = 0; i < board.length; i++) {
+            System.out.print("[");
+            for (int j = 0; j < board.length; j++) {
+                System.out.print(board[i][j] + " ");
+            }
+            System.out.println("]");
+        }
+    }
+
+    private static void printBoardList(List<char[][]> boards) {
+        for (int i = 0; i < boards.size(); i++) {
+            System.out.println("-----");
+            printBoard(boards.get(i));
+        }
+        System.out.println("-----");
+    }
 }
